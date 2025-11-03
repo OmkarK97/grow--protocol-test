@@ -1,0 +1,27 @@
+[package]
+name = "vault"
+version = "1.0.0"
+authors = []
+
+[addresses]
+vault="0x9176f70f125199a3e3d5549ce795a8e906eed75901d535ded623802f15ae3637"
+aptos_std = "0x1"
+
+[dev-addresses]
+
+[dependencies.SupraFramework]
+git = "https://github.com/Entropy-Foundation/aptos-core.git"
+rev = "dev"
+subdir = "aptos-move/framework/supra-framework"
+
+[dependencies.cdpContract]
+local = './cdpContract'
+
+
+[dependencies.AtmosAggregator]
+local = './atmos_swap_interface/aggregator'
+
+
+[dependencies.dexlyn_swap]
+git = "https://github.com/DexlynLabs/dexlyn_swap_interface"
+rev = "mainnet"
