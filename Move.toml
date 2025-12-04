@@ -4,7 +4,7 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-vault="0x9176f70f125199a3e3d5549ce795a8e906eed75901d535ded623802f15ae3637"
+vault="0x8aad78aa9414aa2f697fafe528e1b041e30fe5005e85d15d14f22401f5228826"
 aptos_std = "0x1"
 
 [dev-addresses]

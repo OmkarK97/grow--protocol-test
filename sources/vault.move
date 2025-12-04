@@ -1165,35 +1165,120 @@ module vault::vault_core {
 
     }
 
+    // public entry fun harvest_aggregator<
+    //     CollateralType, Coin1, Coin2, Coin3, Coin4, Coin5, Coin6, Coin7, Coin8, Coin9,
+    //     Coin10, Coin11, Coin12, Coin13, Coin14, Coin15, Coin16, Coin17, T18, Coin19,
+    //     Coin20, Coin21, Coin22, Coin23, Coin24, Coin25, Coin26, Coin27, Coin28, Coin29,
+    //     Coin30, AssetType
+    // >(
+    //     _fund_mangager: &signer,
+    //     _swap_mode: u64,
+    //     _split_count: u8,
+    //     _step_counts: vector<u8>,
+    //     _dex_types: vector<vector<vector<u8>>>,
+    //     _pool_ids: vector<vector<vector<u64>>>,
+    //     _is_x_to_y: vector<vector<vector<bool>>>,
+    //     _pool_types: vector<vector<u8>>,
+    //     _token_addresses: vector<vector<vector<address>>>,
+    //     _token_x_addresses: vector<vector<address>>,
+    //     _token_y_addresses: vector<vector<address>>,
+    //     _extra_data: option::Option<vector<vector<vector<vector<vector<u8>>>>>>,
+    //     _step_amounts: vector<vector<vector<u64>>>,
+    //     _extra_dex_types: option::Option<vector<vector<vector<u8>>>>,
+    //     _output_token_address: address,
+    //     _split_amounts: vector<u64>,
+    //     _min_output_amount: u64,
+    //     _fee_basis_points: u64,
+    //     _integrator_address: address,
+    //     user_addr: address
+    // ) acquires VaultInfo, VaultCapability ,FundManagerInfo{
+    //     let caller_addr = signer::address_of(_fund_mangager);
+    //     assert!(is_fund_manager(caller_addr), ERR_NOT_FUND_MANAGER);
+
+    //     // assert!(signer::address_of(_user_signer) == @vault, ERR_NOT_ADMIN);
+    //     let vault_signer = get_vault_signer();
+    //     let vault_addr = signer::address_of(&vault_signer);
+        
+    //     // Get strategy address
+    //     let strategy_signer = strategy_core::get_strategy_signer();
+    //     let strategy_addr = signer::address_of(&strategy_signer);
+    //     let available_assets = coin::balance<AssetType>(vault_addr);
+
+    //     if (available_assets > 0) {
+    //         // First transfer assets to strategy's resource account
+    //         coin::transfer<AssetType>(
+    //             &vault_signer,
+    //             strategy_addr,
+    //             available_assets
+    //         );
+    //     };
+        
+    //     // Get vault info BEFORE strategy calls to avoid conflicts
+    //     let (total_assets, performance_fee, fee_recipient, asset_type);
+    //     {
+    //         let vault = borrow_global<VaultInfo>(@vault);
+    //         total_assets = vault.total_assets;
+    //         performance_fee = vault.performance_fee;
+    //         fee_recipient = vault.fee_recipient;
+    //         asset_type = vault.asset_type;
+    //     }; // Release the borrow
+        
+    //     // Assert that AssetType matches the vault's asset type
+    //     assert!(type_of<AssetType>() == asset_type, ERR_INVALID_ASSET_TYPE);
+    //     strategy_core::execute_liquidate_aggregator<
+    //     CollateralType, Coin1, Coin2, Coin3, Coin4, Coin5, Coin6, Coin7, Coin8, Coin9,
+    //     Coin10, Coin11, Coin12, Coin13, Coin14, Coin15, Coin16, Coin17, T18, Coin19,
+    //     Coin20, Coin21, Coin22, Coin23, Coin24, Coin25, Coin26, Coin27, Coin28, Coin29,
+    //     Coin30, AssetType>(_swap_mode,_split_count,_step_counts,_dex_types,_pool_ids,_is_x_to_y,_pool_types,_token_addresses,_token_x_addresses,_token_y_addresses,_extra_data,_step_amounts,_extra_dex_types,_output_token_address,_split_amounts,_min_output_amount,_fee_basis_points,_integrator_address,user_addr
+    //     );
+        
+    //     // Get the new balance from the vault's resource account
+    //     let new_balance = coin::balance<AssetType>(vault_addr);
+    //     let difference = 0;
+    //     let is_yield = false;
+    //     let fee_amount = 0;
+    //     if (new_balance > total_assets) {
+    //             difference = new_balance - total_assets;
+    //             is_yield = true;
+    //             fee_amount = (((difference as u128) * (performance_fee as u128) / (FEE_PRECISION as u128)) as u64);
+    //     } else {
+    //             difference = total_assets - new_balance;
+    //             is_yield = false;
+    //     };
+    //     let vault = borrow_global_mut<VaultInfo>(@vault);
+    //     if (is_yield) {
+    //         vault.total_assets = vault.total_assets + difference - fee_amount;
+    //     } else {
+    //         vault.total_assets = vault.total_assets - difference;
+    //     };
+
+    //     if (fee_amount > 0) {
+    //         coin::transfer<AssetType>(
+    //             &vault_signer,
+    //             fee_recipient,
+    //             fee_amount
+    //         );
+    //     };
+
+    //     event::emit(YieldGeneratedEvent { 
+    //         yield_amount: difference,
+    //         fee_amount,
+    //         remaining_yield: difference - fee_amount,
+    //         fee_recipient
+    //     });
+    // }
+
     public entry fun harvest_aggregator<
         CollateralType, Coin1, Coin2, Coin3, Coin4, Coin5, Coin6, Coin7, Coin8, Coin9,
         Coin10, Coin11, Coin12, Coin13, Coin14, Coin15, Coin16, Coin17, T18, Coin19,
         Coin20, Coin21, Coin22, Coin23, Coin24, Coin25, Coin26, Coin27, Coin28, Coin29,
         Coin30, AssetType
     >(
-        _fund_mangager: &signer,
-        _swap_mode: u64,
-        _split_count: u8,
-        _step_counts: vector<u8>,
-        _dex_types: vector<vector<vector<u8>>>,
-        _pool_ids: vector<vector<vector<u64>>>,
-        _is_x_to_y: vector<vector<vector<bool>>>,
-        _pool_types: vector<vector<u8>>,
-        _token_addresses: vector<vector<vector<address>>>,
-        _token_x_addresses: vector<vector<address>>,
-        _token_y_addresses: vector<vector<address>>,
-        _extra_data: option::Option<vector<vector<vector<vector<vector<u8>>>>>>,
-        _step_amounts: vector<vector<vector<u64>>>,
-        _extra_dex_types: option::Option<vector<vector<vector<u8>>>>,
-        _output_token_address: address,
-        _split_amounts: vector<u64>,
-        _min_output_amount: u64,
-        _fee_basis_points: u64,
-        _integrator_address: address,
+        fund_mangager: &signer,
         user_addr: address
     ) acquires VaultInfo, VaultCapability ,FundManagerInfo{
-        let caller_addr = signer::address_of(_fund_mangager);
-        assert!(is_fund_manager(caller_addr), ERR_NOT_FUND_MANAGER);
+        let fund_addr = signer::address_of(fund_mangager);
+        assert!(is_fund_manager(fund_addr), ERR_NOT_FUND_MANAGER);
 
         // assert!(signer::address_of(_user_signer) == @vault, ERR_NOT_ADMIN);
         let vault_signer = get_vault_signer();
@@ -1222,50 +1307,15 @@ module vault::vault_core {
             fee_recipient = vault.fee_recipient;
             asset_type = vault.asset_type;
         }; // Release the borrow
-        
-        // Assert that AssetType matches the vault's asset type
-        assert!(type_of<AssetType>() == asset_type, ERR_INVALID_ASSET_TYPE);
-        strategy_core::execute_liquidate_aggregator<
-        CollateralType, Coin1, Coin2, Coin3, Coin4, Coin5, Coin6, Coin7, Coin8, Coin9,
+
+        strategy_core::execute_liquidate_aggregator<CollateralType, Coin1, Coin2, Coin3, Coin4, Coin5, Coin6, Coin7, Coin8, Coin9,
         Coin10, Coin11, Coin12, Coin13, Coin14, Coin15, Coin16, Coin17, T18, Coin19,
         Coin20, Coin21, Coin22, Coin23, Coin24, Coin25, Coin26, Coin27, Coin28, Coin29,
-        Coin30, AssetType>(_swap_mode,_split_count,_step_counts,_dex_types,_pool_ids,_is_x_to_y,_pool_types,_token_addresses,_token_x_addresses,_token_y_addresses,_extra_data,_step_amounts,_extra_dex_types,_output_token_address,_split_amounts,_min_output_amount,_fee_basis_points,_integrator_address,user_addr
+        Coin30, AssetType>(
+            fund_addr,  // NEW: Pass for transfer
+            user_addr
         );
         
-        // Get the new balance from the vault's resource account
-        let new_balance = coin::balance<AssetType>(vault_addr);
-        let difference = 0;
-        let is_yield = false;
-        let fee_amount = 0;
-        if (new_balance > total_assets) {
-                difference = new_balance - total_assets;
-                is_yield = true;
-                fee_amount = (((difference as u128) * (performance_fee as u128) / (FEE_PRECISION as u128)) as u64);
-        } else {
-                difference = total_assets - new_balance;
-                is_yield = false;
-        };
-        let vault = borrow_global_mut<VaultInfo>(@vault);
-        if (is_yield) {
-            vault.total_assets = vault.total_assets + difference - fee_amount;
-        } else {
-            vault.total_assets = vault.total_assets - difference;
-        };
-
-        if (fee_amount > 0) {
-            coin::transfer<AssetType>(
-                &vault_signer,
-                fee_recipient,
-                fee_amount
-            );
-        };
-
-        event::emit(YieldGeneratedEvent { 
-            yield_amount: difference,
-            fee_amount,
-            remaining_yield: difference - fee_amount,
-            fee_recipient
-        });
     }
 
 
@@ -1296,6 +1346,43 @@ module vault::vault_core {
             difference
         });
     }
+
+    // UPDATED: Make callable by fund_manager (add check); move yield/fee here if not already
+    // public entry fun sync_assets<AssetType>(
+    //     caller: &signer
+    // ) acquires VaultInfo, VaultCapability {
+    //     let caller_addr = signer::address_of(caller);
+    //     assert!(signer::address_of(caller) == @vault, ERR_NOT_ADMIN);
+
+    //     let vault_signer = get_vault_signer();
+    //     let vault_addr = signer::address_of(&vault_signer);
+    //     let actual_balance = coin::balance<AssetType>(vault_addr);  // + strategy if needed
+
+    //     let vault = borrow_global_mut<VaultInfo>(@vault);
+    //     let old_total = vault.total_assets;
+    //     let difference = if (actual_balance > old_total) { actual_balance - old_total } else { old_total - actual_balance };
+    //     let is_yield = actual_balance > old_total;
+
+    //     if (is_yield) {
+    //         let fee_amount = (((difference as u128) * (vault.performance_fee as u128) / (FEE_PRECISION as u128)) as u64);
+    //         vault.total_assets = vault.total_assets + (difference - fee_amount);  // Add net yield
+
+    //         if (fee_amount > 0) {
+    //             coin::transfer<AssetType>(&vault_signer, vault.fee_recipient, fee_amount);
+    //         };
+
+    //         event::emit(YieldGeneratedEvent {
+    //             yield_amount: difference,
+    //             fee_amount,
+    //             remaining_yield: difference - fee_amount,
+    //             fee_recipient: vault.fee_recipient
+    //         });
+    //     } else {
+    //         vault.total_assets = vault.total_assets - difference;  // Loss adjustment
+    //     };
+
+    //     event::emit(AssetsSyncedEvent { old_total, new_total: actual_balance, difference });
+    // }
 
 
     fun is_fund_manager(signer_addr: address): bool acquires FundManagerInfo {
